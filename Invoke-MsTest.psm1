@@ -92,6 +92,7 @@
 		Version: 1.0
 		Inspired by my colleague, Daniel Schroeder's Invoke-MsBuild [https://invokemsbuild.codeplex.com]
 #>
+	[CmdletBinding(DefaultParameterSetName="Wait")]
 	param
 	(
 		# List the root path for your projects or solutions
