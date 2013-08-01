@@ -34,7 +34,10 @@
 		Switch that gives users the option of keeping the cmd window running MsTest.exe open once all the tests are complete.
 		
 	.PARAMETER NoResults
-		Switch will block the results object from returning.
+		Switch will block the results object from returning (Cannot be used with IsAllPassed).
+		
+	.PARAMETER IsAllPassed
+		Switch will return a boolean true if all test pass else a false (Cannot be used with NoResults).
 		
 	.PARAMETER MsTestParameters
 		Additionally MsTest Parameters that the user may wish to include (http://msdn.microsoft.com/en-US/library/ms182489(v=vs.80).aspx)
@@ -86,7 +89,7 @@
 	.NOTES
 		Name:   Invoke-MsTest
 		Author: Paul Selles [http://paulselles.wordpress.com/]
-		Version: 0.1
+		Version: 1.0
 		Inspired by my colleague, Daniel Schroeder's Invoke-MsBuild [https://invokemsbuild.codeplex.com]
 #>
 	param
@@ -126,8 +129,13 @@
 		[switch] $PromptToCloseTestWindow,
 		
 		# Will not return test results
-		[parameter(Mandatory=$false)]
+		[parameter(Mandatory=$false,ParameterSetName="NoResults")]
 		[Switch]$NoResults,
+		
+		# Will return a boolean result, $true if all tests pass otherwise $false
+		[parameter(Mandatory=$false,ParameterSetName="IsAllPassed")]
+		[Alias("BoolResults")]
+		[Switch]$IsAllPassed,
 		
 		# Desired test run parameters
 		[parameter(Mandatory=$false)]
@@ -265,7 +273,8 @@
 			# By returning the unique TestResults we prevent spamming the same problem (ie. Multiple assemblies cannot be found with only report once)
 			if ($Verbose) { Write-Host "Error :"(Dir $Path).Name": Could not find any test containers."  -ForegroundColor Red }
 			$TestResults += New-Object PSObject -Property @{Outcome="testerror";Name=(Dir $Path).Name;Storage="";Comments="Could not find any test containers."}
-			if (!$NoResults) {$TestResults}
+			if ($IsAllPassed) {(!$TestResults)}
+			elseif (!$NoResults) {$TestResults}
 			return
 		}
 		
@@ -337,7 +346,8 @@
 			if ($Verbose) { Write-Host "Error: Could not find or open test results file." }
 			$TestResults += New-Object PSObject -Property @{Outcome="testerror";Name=(Dir $Path).Name;Storage="";Comments="Could not find or open test results file."}
 		}
-		if (!$NoResults) {$TestResults}
+		if ($IsAllPassed) {(($TestResults.outcome | Where {$_ -eq "Passed"}).Count -eq $TestResults.Count)}
+		elseif (!$NoResults) {$TestResults}
 	}
 }
 ################################################################################
