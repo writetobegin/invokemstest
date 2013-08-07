@@ -89,7 +89,7 @@
 	.NOTES
 		Name:   Invoke-MsTest
 		Author: Paul Selles [http://paulselles.wordpress.com/]
-		Version: 1.0
+		Version: 2.0
 		Inspired by my colleague, Daniel Schroeder's Invoke-MsBuild [https://invokemsbuild.codeplex.com]
 #>
 	[CmdletBinding(DefaultParameterSetName="Wait")]
