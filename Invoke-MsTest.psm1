@@ -97,7 +97,7 @@
 	(
 		# List the root path for your projects or solutions
 		#	this will find all test containers within and run them
-		[Parameter(Position=0,Mandatory=$true,ValueFromPipeline=$true,ValueFromPiplinePropertyName=$True)]
+		[Parameter(Position=0,Mandatory=$true,ValueFromPipeline=$true)]
 		[ValidateScript({(Test-Path $_ -PathType Leaf) -and (((Dir $_).Extension -eq ".sln") -or ((Dir $_).Extension -match '.*..*proj'))})]
 		[String[]]$Path,	
 		
